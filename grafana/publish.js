@@ -81,25 +81,7 @@ function publish(dashboard, opts) {
             jar: j,
             timeout: opts.timeout || 1000
         })
-    )
-        .map(function map(response) {
-            return response[0];
-        })
-        .doOnNext(function doOnNext(response) {
-            if ([200, 201].indexOf(response.statusCode) === -1) {
-                console.log('Unable to publish dashboard ' + state.title);
-                console.log(response.body);
-                console.log('Got statusCode' + response.statusCode);
-            } else {
-                console.log('Published the dashboard ' + state.title);
-            }
-        })
-        .map(function map(response) {
-            return response.body;
-        })
-        .doOnError(function doOnError(error) {
-            console.log('Unable to publish dashboard: ' + error);
-        });
+    );
 
 }
 /* eslint-enable */

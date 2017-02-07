@@ -25,7 +25,7 @@ var errors = require('./errors');
 var q = require('q');
 var Rx = require('rx');
 
-var requestPromise = q.nbind(request);
+var _requestPromise = q.nbind(request);
 
 /* eslint-disable max-statements, max-len, no-console, no-undef */
 function publish(dashboard, opts) {
@@ -74,7 +74,7 @@ function publish(dashboard, opts) {
     j.setCookie(cookie, cfg.url);
 
     return Rx.Observable.fromPromise(
-        request({
+        _requestPromise({
             url: cfg.url,
             method: 'POST',
             json: createData,
@@ -82,7 +82,10 @@ function publish(dashboard, opts) {
             timeout: opts.timeout || 1000
         })
     )
-        .doOnNext(function (response) {
+        .map(function map(response) {
+            return response[0];
+        })
+        .doOnNext(function doOnNext(response) {
             if ([200, 201].indexOf(response.statusCode) === -1) {
                 console.log('Unable to publish dashboard ' + state.title);
                 console.log(response.body);
@@ -91,7 +94,10 @@ function publish(dashboard, opts) {
                 console.log('Published the dashboard ' + state.title);
             }
         })
-        .doOnError(function (error) {
+        .map(function map(response) {
+            return response.body;
+        })
+        .doOnError(function doOnError(error) {
             console.log('Unable to publish dashboard: ' + error);
         });
 

@@ -22,6 +22,10 @@
 var request = require('request');
 var config = require('./config');
 var errors = require('./errors');
+var q = require('q');
+var Rx = require('rx');
+
+var requestPromise = q.nbind(request);
 
 /* eslint-disable max-statements, max-len, no-console, no-undef */
 function publish(dashboard, opts) {
@@ -69,23 +73,28 @@ function publish(dashboard, opts) {
     var cookie = request.cookie(cfg.cookie);
     j.setCookie(cookie, cfg.url);
 
-    request({
-        url: cfg.url,
-        method: 'POST',
-        json: createData,
-        jar: j,
-        timeout: opts.timeout || 1000
-    }, function createResponseHandler(createErr, createResp) {
-        if (createErr) {
-            console.log('Unable to publish dashboard: ' + createErr);
-        } else if ([200, 201].indexOf(createResp.statusCode) === -1) {
-            console.log('Unable to publish dashboard ' + state.title);
-            console.log(createResp.body);
-            console.log('Got statusCode' + createResp.statusCode);
-        } else {
-            console.log('Published the dashboard ' + state.title);
-        }
-    });
+    return Rx.Observable.fromPromise(
+        request({
+            url: cfg.url,
+            method: 'POST',
+            json: createData,
+            jar: j,
+            timeout: opts.timeout || 1000
+        })
+    )
+        .doOnNext(function (response) {
+            if ([200, 201].indexOf(response.statusCode) === -1) {
+                console.log('Unable to publish dashboard ' + state.title);
+                console.log(response.body);
+                console.log('Got statusCode' + response.statusCode);
+            } else {
+                console.log('Published the dashboard ' + state.title);
+            }
+        })
+        .doOnError(function (error) {
+            console.log('Unable to publish dashboard: ' + error);
+        });
+
 }
 /* eslint-enable */
 

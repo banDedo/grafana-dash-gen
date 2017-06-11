@@ -41,7 +41,7 @@ function publish(dashboard, opts) {
     var state = dashboard.state;
     var cfg = config.getConfig();
 
-    if (!state || !state.title) {
+    if ((!state || !state.title) && !dashboard.title) {
         throw errors.InvalidState({
             component: 'grafana.Dashboard',
             invalidArg: 'title',

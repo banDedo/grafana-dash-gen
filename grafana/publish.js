@@ -65,7 +65,7 @@ function publish(dashboard, opts) {
     }
 
     var createData = {
-        dashboard: dashboard.generate(),
+        dashboard: (dashboard.generate ? dashboard.generate() : dashboard),
         overwrite: true
     };
 

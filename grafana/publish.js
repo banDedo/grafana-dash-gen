@@ -23,7 +23,6 @@ var request = require('request');
 var config = require('./config');
 var errors = require('./errors');
 var q = require('q');
-var Rx = require('rx');
 
 var _requestPromise = q.nbind(request);
 
@@ -73,15 +72,13 @@ function publish(dashboard, opts) {
     var cookie = request.cookie(cfg.cookie);
     j.setCookie(cookie, cfg.url);
 
-    return Rx.Observable.fromPromise(
-        _requestPromise({
-            url: cfg.url,
-            method: 'POST',
-            json: createData,
-            jar: j,
-            timeout: opts.timeout || 1000
-        })
-    );
+    return _requestPromise({
+        url: cfg.url,
+        method: 'POST',
+        json: createData,
+        jar: j,
+        timeout: opts.timeout || 1000
+    });
 
 }
 /* eslint-enable */

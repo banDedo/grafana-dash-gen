@@ -72,13 +72,19 @@ function publish(dashboard, opts) {
     var cookie = request.cookie(cfg.cookie);
     j.setCookie(cookie, cfg.url);
 
-    return _requestPromise({
+    const requestOpts = {
         url: cfg.url,
         method: 'POST',
         json: createData,
         jar: j,
         timeout: opts.timeout || 1000
-    });
+    };
+    var logger = opts.logger;
+    if (logger && logger.verbose) {
+        logger.verbose(`[Request]: ${JSON.stringify(requestOpts)}`)
+    }
+
+    return _requestPromise(requestOpts);
 
 }
 /* eslint-enable */

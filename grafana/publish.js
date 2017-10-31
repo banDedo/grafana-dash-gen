@@ -72,7 +72,7 @@ function publish(dashboard, opts) {
     var cookie = request.cookie(cfg.cookie);
     j.setCookie(cookie, cfg.url);
 
-    const requestOpts = {
+    var requestOpts = {
         url: cfg.url,
         method: 'POST',
         json: createData,

@@ -81,7 +81,7 @@ function publish(dashboard, opts) {
     };
     var logger = opts.logger;
     if (logger && logger.verbose) {
-        logger.verbose(`[Request]: ${JSON.stringify(requestOpts)}`)
+        logger.verbose('[Request]: ', JSON.stringify(requestOpts));
     }
 
     return _requestPromise(requestOpts);
